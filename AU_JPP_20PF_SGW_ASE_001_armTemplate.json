@@ -1,0 +1,90 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceTags": {
+            "type": "object",
+            "defaultValue": {
+                "Created by": "ACID"
+            }
+        },
+        "aseName": {
+            "type": "string",
+            "defaultValue": "AF-JPP-CRS-ASE01"
+        },
+        "aseResourceGroupName": {
+            "type": "string",
+            "defaultValue": "ACID-JPP-AUT-RG"
+        },
+        "aseVnetName": {
+            "type": "string",
+            "defaultValue": "ACID-JPP-CRS-VNET"
+        },
+        "aseSubnetName": {
+            "type": "string",
+            "defaultValue": "ACID-JPP-CRS-Subnet-Trust-ASE01"
+        },
+        "aseKind": {
+            "type": "string",
+            "defaultValue": "ASEV2"
+        },
+        "asePropertiesInternalLoadBalancingMode": {
+            "type": "string",
+            "defaultValue": "Web, Publishing"
+        },
+        "asePropertiesMultiSize": {
+            "type": "string",
+            "defaultValue": "Standard_D1_V2"
+        },
+        "asePropertiesMultiRoleCount": {
+            "type": "int",
+            "defaultValue": 2
+        },
+        "asePropertiesIpsslAddressCount": {
+            "type": "int",
+            "defaultValue": 0
+        },
+        "asePropertiesDnsSuffix": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "asePropertiesFrontEndScaleFactor": {
+            "type": "int",
+            "defaultValue": 15
+        },
+        "asePropertiesSuspended": {
+            "type": "string",
+            "defaultValue": "false"
+        }
+    },
+    "variables": {
+        "subnetId": "[resourceId(parameters('aseResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('aseVnetName'), parameters('aseSubnetName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/hostingEnvironments",
+            "apiVersion": "2019-08-01",
+            "name": "[parameters('aseName')]",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('resourceTags')]",
+            "kind": "[parameters('aseKind')]",
+            "properties": {
+                "name": "[parameters('aseName')]",
+                "location": "[resourceGroup().location]",
+                "vnetName": "[parameters('aseVnetName')]",
+                "vnetResourceGroupName": "[parameters('aseResourceGroupName')]",
+                "vnetSubnetName": "[parameters('aseSubnetName')]",
+                "virtualNetwork": {
+                    "Id": "[variables('subnetId')]"
+                },
+                "internalLoadBalancingMode": "[parameters('asePropertiesInternalLoadBalancingMode')]",
+                "multiSize": "[parameters('asePropertiesMultiSize')]",
+                "multiRoleCount": "[parameters('asePropertiesMultiRoleCount')]",
+                "ipsslAddressCount": "[parameters('asePropertiesIpsslAddressCount')]",
+                "dnsSuffix": "[parameters('asePropertiesDnsSuffix')]",
+                "frontEndScaleFactor": "[parameters('asePropertiesFrontEndScaleFactor')]",
+                "suspended": "[parameters('asePropertiesSuspended')]"
+            }
+        }
+    ]
+}

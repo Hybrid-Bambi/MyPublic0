@@ -1,0 +1,97 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "aseApiVersion": {
+            "type": "string",
+            "defaultValue": "2018-02-01"
+        },
+        "aseName": {
+            "type": "string",
+            "defaultValue": "ACID-JPP-CRS-ASE02"
+        },
+        "aseResourceGroupName": {
+            "type": "string",
+            "defaultValue": "ACID-JPP-AUT-RG"
+        },
+        "aseVnetName": {
+            "type": "string",
+            "defaultValue": "ACID-JPP-CRS-VNET"
+        },
+        "aseVnetId": {
+            "type": "string",
+            "defaultValue": "/subscriptions/c597b4c9-c745-4293-b033-bb022b08b816/resourceGroups/ACID-JPP-AUT-RG/providers/Microsoft.Network/virtualNetworks/ACID-JPP-CRS-VNET"
+        },
+       "aseSubnetName": {
+           "type": "string",
+           "defaultValue": "ACID-JPP-CRS-Subnet-Trust-ASEforTest"
+        },
+        "aseKind": {
+            "type": "string",
+            "defaultValue": "ASEV2"
+        },
+        "asePropertiesInternalLoadBalancingMode": {
+            "type": "string",
+            "defaultValue": "Web,Publishing"
+        },
+        "asePropertiesMultiSize": {
+            "type": "string",
+            "defaultValue": "Standard_D2_V2"
+        },
+        "asePropertiesMultiRoleCount": {
+            "type": "int",
+            "defaultValue": 5
+        },
+        "asePropertiesIpsslAddressCount": {
+            "type": "int",
+            "defaultValue": 0
+        },
+        "asePropertiesDnsSuffix": {
+            "type": "string",
+            "defaultValue": "jp.cv.mazure"
+        },
+        "asePropertiesNetworkAccessControlList": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "asePropertiesFrontEndScaleFactor": {
+            "type": "int",
+            "defaultValue": 11
+        },
+        "asePropertiesSuspended": {
+            "type": "string",
+            "defaultValue": "false"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/hostingEnvironments",
+            "apiVersion": "[parameters('aseApiVersion')]",
+            "name": "[parameters('aseName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "[parameters('aseKind')]",
+            "properties": {
+                "name": "[parameters('aseName')]",
+                "location": "[resourceGroup().location]",
+                "vnetName": "[parameters('aseVnetName')]",
+                "vnetResourceGroupName": "[parameters('aseResourceGroupName')]",
+                "vnetSubnetName": "[parameters('aseSubnetName')]",
+                "virtualNetwork": {
+                    "id":"[resourceId('Microsoft.Network/virtualNetworks', parameters('aseVnetName'))]",
+                    "subnet": "[parameters('aseSubnetName')]"
+                },
+                "internalLoadBalancingMode": "[parameters('asePropertiesInternalLoadBalancingMode')]",
+                "multiSize": "[parameters('asePropertiesMultiSize')]",
+                "multiRoleCount": "[parameters('asePropertiesMultiRoleCount')]",
+                "ipsslAddressCount": "[parameters('asePropertiesIpsslAddressCount')]",
+                "dnsSuffix": "[parameters('asePropertiesDnsSuffix')]",
+                "networkAccessControlList": [
+                    "[parameters('asePropertiesDnsSuffix')]"
+                ],
+                "frontEndScaleFactor": "[parameters('asePropertiesFrontEndScaleFactor')]",
+                "suspended": "[parameters('asePropertiesSuspended')]"
+            }
+        }
+    ]
+}
